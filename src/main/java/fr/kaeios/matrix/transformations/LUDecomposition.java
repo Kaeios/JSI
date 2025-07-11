@@ -1,17 +1,23 @@
 package fr.kaeios.matrix.transformations;
 
 import fr.kaeios.api.computation.UnaryOperator;
+import fr.kaeios.api.exceptions.MatrixNotSquareException;
 import fr.kaeios.api.matrix.CoefficientSupplier;
 import fr.kaeios.api.matrix.Matrix;
 
 public class LUDecomposition implements UnaryOperator<LUDecomposition.LUResult, Matrix> {
 
     @Override
+    public boolean checkPreconditions(Matrix operand) {
+        if(operand.getRowsCount() != operand.getColumnsCount())
+            throw new MatrixNotSquareException("Computing LU decomposition of a non square matrix");
+
+        return true;
+    }
+
+    @Override
     public LUResult compute(Matrix operand) {
         int size = operand.getRowsCount();
-        if (size != operand.getColumnsCount()) {
-            throw new IllegalArgumentException("Matrix must be square for LU decomposition");
-        }
 
         Matrix lower = Matrix.from(size, size, CoefficientSupplier.IDENTITY);
         Matrix upper = Matrix.from(size, size, CoefficientSupplier.from(operand.getValues()));

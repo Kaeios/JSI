@@ -2,6 +2,7 @@ package fr.kaeios.api.matrix;
 
 import fr.kaeios.api.computation.BinaryOperator;
 import fr.kaeios.api.computation.UnaryOperator;
+import fr.kaeios.api.exceptions.MatrixShapeMismatchException;
 
 public interface Matrix {
 
@@ -109,13 +110,22 @@ public interface Matrix {
 
         @Override
         public Matrix dotApply(Matrix other, BinaryOperator<Double, Double, Double> operator) {
-            // TODO Error if size does not match
+
+            if(other == null
+                    || other.getRowsCount() != this.getRowsCount()
+                    || other.getColumnsCount() != this.getColumnsCount())
+                throw new MatrixShapeMismatchException("Dot apply between matrix with different shapes");
 
             Double[][] newValues = new Double[rowsCount][columnsCount];
 
             for (int i = 0; i < rowsCount; i++) {
                 for (int j = 0; j < columnsCount; j++) {
-                    newValues[i][j] = operator.compute(this.values[i][j], other.getValues()[i][j]);
+                    double x = this.values[i][j];
+                    double y = other.getValues()[i][j];
+
+                    if(operator.checkPreconditions(x, y))
+                        newValues[i][j] = operator.compute(x, y);
+
                 }
             }
 
@@ -124,18 +134,18 @@ public interface Matrix {
 
         @Override
         public Matrix dotApply(UnaryOperator<Double, Double> operator) {
-            // TODO Error if size does not match
-
             Double[][] newValues = new Double[rowsCount][columnsCount];
 
             for (int i = 0; i < rowsCount; i++) {
                 for (int j = 0; j < columnsCount; j++) {
-                    newValues[i][j] = operator.compute(this.values[i][j]);
+                    double x = this.values[i][j];
+
+                    if(operator.checkPreconditions(x))
+                        newValues[i][j] = operator.compute(x);
                 }
             }
 
             return new Impl(this.rowsCount, this.columnsCount, newValues);
-
         }
 
         @Override

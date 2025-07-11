@@ -1,10 +1,19 @@
 package fr.kaeios.matrix.processing;
 
 import fr.kaeios.api.computation.BinaryOperator;
+import fr.kaeios.api.exceptions.MatrixShapeMismatchException;
 import fr.kaeios.api.matrix.CoefficientSupplier;
 import fr.kaeios.api.matrix.Matrix;
 
 public class Convolve1D implements BinaryOperator<Matrix, Matrix, Matrix> {
+
+    @Override
+    public boolean checkPreconditions(Matrix x, Matrix y) {
+        if(x.getRowsCount() != 1 || y.getRowsCount() != 1)
+            throw new MatrixShapeMismatchException("Both signal and filter should be 1D for 1D convolution");
+
+        return true;
+    }
 
     @Override
     public Matrix compute(Matrix signal, Matrix filter) {

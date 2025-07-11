@@ -1,11 +1,20 @@
 package fr.kaeios.matrix.transformations;
 
 import fr.kaeios.api.computation.UnaryOperator;
+import fr.kaeios.api.exceptions.MatrixNotSquareException;
 import fr.kaeios.api.matrix.CoefficientSupplier;
 import fr.kaeios.api.matrix.Matrix;
 import fr.kaeios.matrix.MatrixOperations;
 
 public class SymmetricEVDecomposition implements UnaryOperator<SymmetricEVDecomposition.EVDResult, Matrix> {
+
+    @Override
+    public boolean checkPreconditions(Matrix operand) {
+        if(operand.getRowsCount() != operand.getColumnsCount())
+            throw new MatrixNotSquareException("Computing EVD of a non square matrix");
+
+        return true;
+    }
 
     @Override
     public EVDResult compute(Matrix operand) {

@@ -1,10 +1,19 @@
 package fr.kaeios.matrix.operations.binary;
 
 import fr.kaeios.api.computation.BinaryOperator;
+import fr.kaeios.api.exceptions.MatrixShapeMismatchException;
 import fr.kaeios.api.matrix.CoefficientSupplier;
 import fr.kaeios.api.matrix.Matrix;
 
 public class MatrixMultiplication implements BinaryOperator<Matrix, Matrix, Matrix> {
+
+    @Override
+    public boolean checkPreconditions(Matrix x, Matrix y) {
+        if(x.getColumnsCount() != x.getRowsCount())
+            throw new MatrixShapeMismatchException("Multiplying matrix of incompatible shapes");
+
+        return true;
+    }
 
     @Override
     public Matrix compute(Matrix matrix, Matrix matrix2) {

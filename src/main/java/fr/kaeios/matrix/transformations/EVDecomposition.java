@@ -30,7 +30,6 @@ public class EVDecomposition implements UnaryOperator<SymmetricEVDecomposition.E
             Qtot = Qtot.apply(QR.fullQ(), MatrixOperations.MUL);
 
             if (isConverged(H, 1e-10)) {
-                System.out.println("Converged" + i);
                 break;
             }
         }

@@ -1,12 +1,21 @@
 package fr.kaeios.matrix.operations.unary;
 
 import fr.kaeios.api.computation.UnaryOperator;
+import fr.kaeios.api.exceptions.MatrixNotSquareException;
 import fr.kaeios.api.matrix.CoefficientSupplier;
 import fr.kaeios.api.matrix.Matrix;
 import fr.kaeios.matrix.MatrixOperations;
 import fr.kaeios.matrix.transformations.LUDecomposition;
 
 public class MatrixInverse implements UnaryOperator<Matrix, Matrix> {
+
+    @Override
+    public boolean checkPreconditions(Matrix operand) {
+        if(operand.getRowsCount() != operand.getColumnsCount())
+            throw new MatrixNotSquareException("Inverting a non square matrix");
+
+        return true;
+    }
 
     @Override
     public Matrix compute(Matrix matrix) {
