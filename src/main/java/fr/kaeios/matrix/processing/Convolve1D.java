@@ -17,8 +17,6 @@ public class Convolve1D implements BinaryOperator<Matrix, Matrix, Matrix> {
 
     @Override
     public Matrix compute(Matrix signal, Matrix filter) {
-        // TODO Assert 1 row
-
         int convCenter = filter.getColumnsCount() / 2;
         int signalLength = signal.getColumnsCount();
 
