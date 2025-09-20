@@ -1,19 +1,32 @@
-name: Test Gitea Action
-run-name: ${{ gitea.actor }} is testing out Gitea Actions 🚀
+name: Build & Deploy to Dev
+run-name: ${{ gitea.actor }} is testing ${{ gitea.repository }} 🚀
 on: [push]
 
 jobs:
-  Explore-Gitea-Actions:
+  build_and_deploy:
     runs-on: debian
     steps:
-      - run: echo "🎉 The job was automatically triggered by a ${{ gitea.event_name }} event."
-      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by Gitea!"
-      - run: echo "🔎 The name of your branch is ${{ gitea.ref }} and your repository is ${{ gitea.repository }}."
       - name: Check out repository code
         uses: actions/checkout@v4
-      - run: echo "💡 The ${{ gitea.repository }} repository has been cloned to the runner."
-      - run: echo "🖥️ The workflow is now ready to test your code on the runner."
-      - name: List files in the repository
+
+      - name: Build
+        run: mvn clean install
+
+      - name: Get jar name
+        id: jar_info
         run: |
-          mvn clean install
-      - run: echo "🍏 This job's status is ${{ job.status }}."
+          # Get artifactId and version from pom.xml
+          ARTIFACT_ID=$(xmllint --xpath "/*[local-name()='project']/*[local-name()='artifactId']/text()" pom.xml)
+          VERSION=$(xmllint --xpath "/*[local-name()='project']/*[local-name()='version']/text()" pom.xml)
+          JAR_NAME="${ARTIFACT_ID}-${VERSION}.jar"
+          echo "ARTIFACT_ID=$ARTIFACT_ID" >> $GITHUB_ENV
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "JAR_NAME=$JAR_NAME" >> $GITHUB_ENV
+
+      - name: Remove old jars on server
+        run: |
+          ssh -o StrictHostKeyChecking=no dev@magicalsky.fr -p 42 "rm -f /home/dev/final121/plugins/${ARTIFACT_ID}-*.jar"
+
+      - name: Copy new jar to server
+        run: |
+          scp -o StrictHostKeyChecking=no target/${JAR_NAME} -P 42 dev@magicalsky.fr:/home/dev/final121/plugins/
