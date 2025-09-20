@@ -29,4 +29,4 @@ jobs:
 
       - name: Copy new jar to server
         run: |
-          scp -o StrictHostKeyChecking=no target/${JAR_NAME} -P 42 dev@magicalsky.fr:/home/dev/final121/plugins/
+          scp -o StrictHostKeyChecking=no -P 42 target/${JAR_NAME} dev@magicalsky.fr:/home/dev/final121/plugins/
