@@ -6,7 +6,7 @@ import fr.kaeios.api.matrix.CoefficientSupplier;
 import fr.kaeios.api.matrix.Matrix;
 import fr.kaeios.matrix.MatrixOperations;
 
-public class SymmetricEVDecomposition implements UnaryOperator<SymmetricEVDecomposition.EVDResult, Matrix> {
+public class SymmetricEVDecomposition implements UnaryOperator<EVDecomposition.EVDResult, Matrix> {
 
     @Override
     public boolean checkPreconditions(Matrix operand) {
@@ -17,7 +17,7 @@ public class SymmetricEVDecomposition implements UnaryOperator<SymmetricEVDecomp
     }
 
     @Override
-    public EVDResult compute(Matrix operand) {
+    public EVDecomposition.EVDResult compute(Matrix operand) {
         int size = operand.getRowsCount();
 
         Matrix A = Matrix.from(size, size, CoefficientSupplier.from(operand.getValues()));
@@ -76,7 +76,7 @@ public class SymmetricEVDecomposition implements UnaryOperator<SymmetricEVDecomp
             }
         }
 
-        return new EVDResult(V, D);
+        return new EVDecomposition.EVDResult(V, D);
     }
 
     private void normalize(Double[] v) {
@@ -84,29 +84,6 @@ public class SymmetricEVDecomposition implements UnaryOperator<SymmetricEVDecomp
         for (Double val : v) norm += val * val;
         norm = Math.sqrt(norm);
         for (int i = 0; i < v.length; i++) v[i] /= norm;
-    }
-
-    public static final class EVDResult {
-
-        private final Matrix V;
-        private final Matrix D;
-
-        public EVDResult(Matrix V, Matrix D) {
-            this.V = V;
-            this.D = D;
-        }
-
-        public Matrix V() {
-            return V;
-        }
-
-        public Matrix D() {
-            return D;
-        }
-
-        public Matrix Vinv() {
-            return V.apply(MatrixOperations.INVERSE);
-        }
     }
 
 }

@@ -30,7 +30,7 @@ public class MatrixOperations {
     public static final UnaryOperator<LUDecomposition.LUResult, Matrix> LU = new LUDecomposition();
     public static final UnaryOperator<RowEchelonDecomposition.RowEchelonResult, Matrix> ROW_ECHELON = new RowEchelonDecomposition();
     public static final UnaryOperator<QRDecomposition.QRResult, Matrix> QR = new QRDecomposition();
-    public static final UnaryOperator<SymmetricEVDecomposition.EVDResult, Matrix> EVD = new EVDecomposition();
+    public static final UnaryOperator<EVDecomposition.EVDResult, Matrix> EVD = new EVDecomposition();
     public static final UnaryOperator<SVDecomposition.SVDResult, Matrix> SVD = new SVDecomposition();
     public static final UnaryOperator<HessenbergDecomposition.HessenbergResult, Matrix> HESSENBERG = new HessenbergDecomposition();
 

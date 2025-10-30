@@ -5,6 +5,7 @@ import fr.kaeios.api.matrix.CoefficientSupplier;
 import fr.kaeios.api.matrix.Matrix;
 import fr.kaeios.api.matrix.MatrixExtractor;
 import fr.kaeios.matrix.MatrixOperations;
+import fr.kaeios.matrix.transformations.EVDecomposition;
 import fr.kaeios.matrix.transformations.SymmetricEVDecomposition;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
@@ -36,7 +37,7 @@ public class Main {
                 {0.0}
         }));
 
-        SymmetricEVDecomposition.EVDResult EVD = A.apply(MatrixOperations.EVD);
+        EVDecomposition.EVDResult EVD = A.apply(MatrixOperations.EVD);
 
         Matrix exponents = EVD.D().extract(MatrixExtractor.diag());
 
@@ -91,66 +92,66 @@ public class Main {
 
         // ==================================================================================================== //
 
-//        // Length of signal
-//        int LENGTH = 1000;
-//        // Max polynomial degree
-//        int N = 2;
-//        // Window size
-//        int M = 15;
-//        // Window center
-//        int center = M / 2;
-//
-//        // Gen time steps
-//        Matrix ty = Matrix.from(1, LENGTH, (i, j) -> j/(double)(LENGTH-1));
-//        // generate a signal
-//        Matrix y = ty.dotApply(t -> Math.sin(2 / (t + 0.05)));
-//        // add noise to signal
-//        y = y.dotApply(x -> x + RNG.nextGaussian() * 0.1);
-//
-//        // generate base matrix for LPA
-//        Matrix t = Matrix.from(1, M, (i, j) -> j/(double)(M-1));
-//        Matrix T = Matrix.from(M, N+1, (i, j) -> Math.pow(t.getValues()[0][i], j));
-//
-//        // Compute filter for convolution
-//        QRDecomposition.QRResult QR = T.apply(MatrixOperations.QR);
-//        Matrix Q = QR.Q();
-//        Matrix row = Q.extract(MatrixExtractor.row(center));
-//        Matrix g = row.apply(Q.apply(MatrixOperations.TRANSPOSE), MatrixOperations.MUL).apply(MatrixOperations.V_FLIP);
-//
-//        // Synthesis of signal
-//        Matrix Shat = y.apply(g, MatrixOperations.CONV_1D);
-//
-//        XYSeries signal = new XYSeries("Input Signal");
-//        for(int i = 0; i < LENGTH; i++)
-//            signal.add(ty.getValues()[0][i], y.getValues()[0][i]);
-//
-//        XYSeries lpa = new XYSeries("LPA");
-//        for(int i = 0; i < LENGTH; i++)
-//            lpa.add(ty.getValues()[0][i], Shat.getValues()[0][i]);
-//
-//        XYSeriesCollection dataset = new XYSeriesCollection();
-//        dataset.addSeries(signal);
-//        dataset.addSeries(lpa);
-//
-//        JFreeChart xyLineChart = ChartFactory.createXYLineChart(
-//                "Test XY Line",
-//                "Time",
-//                "Amplitude",
-//                dataset,
-//                PlotOrientation.VERTICAL,
-//                true,
-//                true,
-//                true
-//        );
-//
-//        BufferedImage img = xyLineChart.createBufferedImage(1920, 1080);
-//        File outputfile = new File("image.png");
-//        try {
-//            ImageIO.write(img, "png", outputfile);
-//            System.out.println(outputfile.getAbsolutePath());
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
+        // Length of signal
+        int LENGTH = 1000;
+        // Max polynomial degree
+        int N = 2;
+        // Window size
+        int M = 15;
+        // Window center
+        int center = M / 2;
+
+        // Gen time steps
+        Matrix ty = Matrix.from(1, LENGTH, (i, j) -> j/(double)(LENGTH-1));
+        // generate a signal
+        Matrix y = ty.dotApply(t -> Math.sin(2 / (t + 0.05)));
+        // add noise to signal
+        y = y.dotApply(x -> x + RNG.nextGaussian() * 0.1);
+
+        // generate base matrix for LPA
+        Matrix t = Matrix.from(1, M, (i, j) -> j/(double)(M-1));
+        Matrix T = Matrix.from(M, N+1, (i, j) -> Math.pow(t.getValues()[0][i], j));
+
+        // Compute filter for convolution
+        QRDecomposition.QRResult QR = T.apply(MatrixOperations.QR);
+        Matrix Q = QR.Q();
+        Matrix row = Q.extract(MatrixExtractor.row(center));
+        Matrix g = row.apply(Q.apply(MatrixOperations.TRANSPOSE), MatrixOperations.MUL).apply(MatrixOperations.V_FLIP);
+
+        // Synthesis of signal
+        Matrix Shat = y.apply(g, MatrixOperations.CONV_1D);
+
+        XYSeries signal = new XYSeries("Input Signal");
+        for(int i = 0; i < LENGTH; i++)
+            signal.add(ty.getValues()[0][i], y.getValues()[0][i]);
+
+        XYSeries lpa = new XYSeries("LPA");
+        for(int i = 0; i < LENGTH; i++)
+            lpa.add(ty.getValues()[0][i], Shat.getValues()[0][i]);
+
+        XYSeriesCollection dataset = new XYSeriesCollection();
+        dataset.addSeries(signal);
+        dataset.addSeries(lpa);
+
+        JFreeChart xyLineChart = ChartFactory.createXYLineChart(
+                "Test XY Line",
+                "Time",
+                "Amplitude",
+                dataset,
+                PlotOrientation.VERTICAL,
+                true,
+                true,
+                true
+        );
+
+        BufferedImage img = xyLineChart.createBufferedImage(1920, 1080);
+        File outputfile = new File("image.png");
+        try {
+            ImageIO.write(img, "png", outputfile);
+            System.out.println(outputfile.getAbsolutePath());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         // ==================================================================================================== //
 

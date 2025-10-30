@@ -7,10 +7,10 @@ import fr.kaeios.api.matrix.MatrixExtractor;
 import fr.kaeios.matrix.MatrixOperations;
 
 // TODO Replace inverse with LU solving
-public class EVDecomposition implements UnaryOperator<SymmetricEVDecomposition.EVDResult, Matrix> {
+public class EVDecomposition implements UnaryOperator<EVDecomposition.EVDResult, Matrix> {
 
     @Override
-    public SymmetricEVDecomposition.EVDResult compute(Matrix operand) {
+    public EVDResult compute(Matrix operand) {
 
         Matrix H;
         Matrix Qtot;
@@ -53,7 +53,7 @@ public class EVDecomposition implements UnaryOperator<SymmetricEVDecomposition.E
         }
     }
 
-    private SymmetricEVDecomposition.EVDResult refineEigenvectorsByRQI(Matrix A, Matrix Q, int maxRQIIter) {
+    private EVDResult refineEigenvectorsByRQI(Matrix A, Matrix Q, int maxRQIIter) {
         int n = A.getRowsCount();
         double[][] refinedVectors = new double[n][n];
         double[] refinedEigenvalues = new double[n];
@@ -118,7 +118,7 @@ public class EVDecomposition implements UnaryOperator<SymmetricEVDecomposition.E
         // Optionally, normalize columns to unit length
         refinedQ = refinedQ.apply(MatrixOperations.NORM_COLS);
 
-        return new SymmetricEVDecomposition.EVDResult(refinedQ, Matrix.from(n, n, CoefficientSupplier.diag(sortedEigenvalues)));
+        return new EVDResult(refinedQ, Matrix.from(n, n, CoefficientSupplier.diag(sortedEigenvalues)));
     }
 
     private boolean isConverged(Matrix H, double tol) {
@@ -130,6 +130,27 @@ public class EVDecomposition implements UnaryOperator<SymmetricEVDecomposition.E
         return sumSubDiag < tol;
     }
 
+    public static final class EVDResult {
 
+        private final Matrix V;
+        private final Matrix D;
+
+        public EVDResult(Matrix V, Matrix D) {
+            this.V = V;
+            this.D = D;
+        }
+
+        public Matrix V() {
+            return V;
+        }
+
+        public Matrix D() {
+            return D;
+        }
+
+        public Matrix Vinv() {
+            return V.apply(MatrixOperations.INVERSE);
+        }
+    }
 
 }
